@@ -1,0 +1,35 @@
+plugins {
+    id "java"
+    id "com.github.johnrengelman.shadow" version "${SHADOW_VERSION}"
+    id "net.kyori.blossom" version "${BLOSSOM_VERSION}"
+}
+
+defaultTasks "clean", "build", "shadowJar"
+
+group "${NFSERVER_GROUP}"
+version "${NFSERVER_VERSION}"
+
+repositories {
+    mavenCentral()
+    maven { url "https://jitpack.io" }
+}
+
+dependencies {
+    implementation "org.spongepowered:configurate-gson:${CONFIGURATE_VERSION}"
+    implementation "com.github.Minestom:Minestom:${MINESTOM_VERSION}"
+}
+
+compileJava.options.encoding = "UTF-8"
+java.toolchain.languageVersion = JavaLanguageVersion.of(17)
+
+shadowJar {
+    jar {
+        manifest {
+            attributes "Main-Class": "ru.notfoundname.notfoundserver.NFServer", "Multi-Release": true
+        }
+    }
+    blossom {
+        var cringe = "src/main/java/ru/notfoundname/notfoundserver/NFServer.java"
+        replaceToken("nfsversion", "${NFSERVER_VERSION}", cringe)
+    }
+}
