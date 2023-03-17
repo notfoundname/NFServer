@@ -1,8 +1,6 @@
 package ru.notfoundname.notfoundserver;
 
 import net.minestom.server.MinecraftServer;
-import net.minestom.server.command.CommandSender;
-import net.minestom.server.command.builder.SimpleCommand;
 import net.minestom.server.entity.Player;
 import net.minestom.server.event.GlobalEventHandler;
 import net.minestom.server.event.player.PlayerLoginEvent;
@@ -12,8 +10,8 @@ import net.minestom.server.extras.velocity.VelocityProxy;
 import net.minestom.server.instance.*;
 import net.minestom.server.instance.block.Block;
 import net.minestom.server.coordinate.Pos;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import ru.notfoundname.notfoundserver.commands.StopCommand;
+import ru.notfoundname.notfoundserver.commands.VersionCommand;
 
 import java.io.IOException;
 import java.util.Locale;
@@ -50,17 +48,8 @@ public class NFServer {
             player.setRespawnPoint(new Pos(0, 2, 0));
         });
 
-        MinecraftServer.getCommandManager().register(new SimpleCommand("stop") {
-            @Override
-            public boolean process(@NotNull CommandSender sender, @NotNull String command, @NotNull String[] args) {
-                stop();
-                return true;
-            }
-            @Override
-            public boolean hasAccess(@NotNull CommandSender sender, @Nullable String commandString) {
-                return true;
-            }
-        });
+        MinecraftServer.getCommandManager().register(new StopCommand());
+        MinecraftServer.getCommandManager().register(new VersionCommand());
 
         switch (ServerProperties.config.connectionMode.toUpperCase(Locale.ROOT)) {
             case "OFFLINE":
@@ -84,6 +73,7 @@ public class NFServer {
     }
 
     public static void stop() {
+        MinecraftServer.LOGGER.info("Shutting down NFServer " + VERSION);
         System.exit(0);
     }
 }

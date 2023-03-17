@@ -11,7 +11,7 @@ public final class ServerProperties {
 
     public static File serverFile = new File(".", "server.json");
     public static GsonConfigurationLoader loader;
-    public static ConfigurationNode node;
+    public static ConfigurationNode rootNode;
     public static Properties config;
 
     public static void initialize() throws IOException {
@@ -28,11 +28,11 @@ public final class ServerProperties {
                 .path(serverFile.toPath()) // or url(), or source/sink
                 .build();
 
-        node = loader.load(); // Load from file
-        config = node.get(Properties.class); // Populate object
+        rootNode = loader.load(); // Load from file
+        config = rootNode.get(Properties.class); // Populate object
 
-        node.set(Properties.class, config); // Update the backing node
-        loader.save(node); // Write to the original file
+        rootNode.set(Properties.class, config); // Update the backing node
+        loader.save(rootNode); // Write to the original file
     }
 
     @ConfigSerializable
@@ -47,6 +47,7 @@ public final class ServerProperties {
         public boolean broadcastToLan = true;
         public boolean whiteList = false;
         public boolean whiteListActsAsBlackList = false;
+        public boolean allowAllPlayersToExecuteDefaultCommands = false;
         public String levelName = "world";
         public int viewDistance = 10;
         public int simulationDistance = 10;
