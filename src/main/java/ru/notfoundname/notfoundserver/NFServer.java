@@ -14,9 +14,9 @@ import net.minestom.server.instance.block.Block;
 import net.minestom.server.coordinate.Pos;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import ru.notfoundname.notfoundserver.configuration.NFServerProperties;
 
 import java.io.IOException;
+import java.util.Locale;
 
 public class NFServer {
 
@@ -27,7 +27,7 @@ public class NFServer {
         MinecraftServer.LOGGER.info("Initializing NFServer " + VERSION);
 
         try {
-            NFServerProperties.initialize();
+            ServerProperties.initialize();
         } catch (IOException e) {
             System.err.println("Failed to initialize server configuration: " + e.getMessage());
             if (e.getCause() != null) {
@@ -62,22 +62,25 @@ public class NFServer {
             }
         });
 
-        switch (NFServerProperties.config.connectionMode) {
-            case OFFLINE:
+        switch (ServerProperties.config.connectionMode.toUpperCase(Locale.ROOT)) {
+            case "OFFLINE":
                 break;
-            case ONLINE:
+            case "ONLINE":
                 MojangAuth.init();
                 break;
-            case BUNGEECORD:
+            case "BUNGEECORD":
                 BungeeCordProxy.enable();
                 break;
-            case VELOCITY:
-                VelocityProxy.enable(NFServerProperties.config.connectionModeSecret);
+            case "VELOCITY":
+                VelocityProxy.enable(ServerProperties.config.connectionModeSecret);
+                break;
+            default:
+                MinecraftServer.LOGGER.warn("Unknown connection mode " + ServerProperties.config.connectionMode);
                 break;
         }
 
-        minecraftServer.start(NFServerProperties.config.serverIp, NFServerProperties.config.serverPort);
-        MinecraftServer.LOGGER.info("Server started at " + NFServerProperties.config.serverIp + ":" + NFServerProperties.config.serverPort);
+        minecraftServer.start(ServerProperties.config.serverIp, ServerProperties.config.serverPort);
+        MinecraftServer.LOGGER.info("Server started at " + ServerProperties.config.serverIp + ":" + ServerProperties.config.serverPort);
     }
 
     public static void stop() {

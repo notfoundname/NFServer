@@ -1,17 +1,17 @@
-package ru.notfoundname.notfoundserver.configuration;
+package ru.notfoundname.notfoundserver;
 
-import org.spongepowered.configurate.BasicConfigurationNode;
+import org.spongepowered.configurate.ConfigurationNode;
 import org.spongepowered.configurate.gson.GsonConfigurationLoader;
 import org.spongepowered.configurate.objectmapping.ConfigSerializable;
 
 import java.io.File;
 import java.io.IOException;
 
-public final class NFServerProperties {
+public final class ServerProperties {
 
     public static File serverFile = new File(".", "server.json");
     public static GsonConfigurationLoader loader;
-    public static BasicConfigurationNode node;
+    public static ConfigurationNode node;
     public static Properties config;
 
     public static void initialize() throws IOException {
@@ -24,11 +24,15 @@ public final class NFServerProperties {
             }
         }
 
-        loader = GsonConfigurationLoader.builder().path(serverFile.toPath()).build();
-        node = loader.load();
-        config = node.get(Properties.class);
-        node.set(Properties.class, config);
-        loader.save(node);
+        loader = GsonConfigurationLoader.builder()
+                .path(serverFile.toPath()) // or url(), or source/sink
+                .build();
+
+        node = loader.load(); // Load from file
+        config = node.get(Properties.class); // Populate object
+
+        node.set(Properties.class, config); // Update the backing node
+        loader.save(node); // Write to the original file
     }
 
     @ConfigSerializable
@@ -37,7 +41,7 @@ public final class NFServerProperties {
         public int serverPort = 25565;
         public String motd = "A Minecraft NFServer";
         public int maxPlayers = 20;
-        public ConnectionMode connectionMode = ConnectionMode.OFFLINE;
+        public String connectionMode = "offline";
         public String connectionModeSecret = "secret";
         public boolean hideOnlinePlayers = false;
         public boolean broadcastToLan = true;
@@ -47,13 +51,5 @@ public final class NFServerProperties {
         public int viewDistance = 10;
         public int simulationDistance = 10;
         public boolean pvp = true;
-    }
-
-    @ConfigSerializable
-    public enum ConnectionMode {
-        OFFLINE,
-        ONLINE,
-        BUNGEECORD,
-        VELOCITY
     }
 }
