@@ -33,3 +33,10 @@ shadowJar {
         replaceToken("nfsversion", "${NFSERVER_VERSION}", cringe)
     }
 }
+
+// TODO: replace with something not deprecated
+gradle.buildFinished {
+    delete fileTree("build/libs") {
+        exclude "*-all.jar"
+    }
+}

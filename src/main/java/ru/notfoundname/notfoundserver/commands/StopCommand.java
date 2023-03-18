@@ -7,7 +7,7 @@ import ru.notfoundname.notfoundserver.ServerProperties;
 
 public class StopCommand extends Command {
     public StopCommand() {
-        super("stop", "end", "shutdown", "quit");
+        super("stop", "end", "shutdown", "quit", "");
         setCondition(((sender, commandString) -> {
             if (sender instanceof Player) {
                 return ServerProperties.config.allowAllPlayersToExecuteDefaultCommands;

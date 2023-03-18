@@ -1,6 +1,7 @@
 package ru.notfoundname.notfoundserver;
 
 import net.minestom.server.MinecraftServer;
+import net.minestom.server.entity.GameMode;
 import net.minestom.server.entity.Player;
 import net.minestom.server.event.GlobalEventHandler;
 import net.minestom.server.event.player.PlayerLoginEvent;
@@ -10,6 +11,7 @@ import net.minestom.server.extras.velocity.VelocityProxy;
 import net.minestom.server.instance.*;
 import net.minestom.server.instance.block.Block;
 import net.minestom.server.coordinate.Pos;
+import ru.notfoundname.notfoundserver.commands.ExtensionsCommand;
 import ru.notfoundname.notfoundserver.commands.StopCommand;
 import ru.notfoundname.notfoundserver.commands.VersionCommand;
 
@@ -36,7 +38,8 @@ public class NFServer {
 
         InstanceManager instanceManager = MinecraftServer.getInstanceManager();
 
-        InstanceContainer instanceContainer = instanceManager.createInstanceContainer();
+        InstanceContainer instanceContainer = instanceManager.createInstanceContainer(
+                new AnvilLoader(ServerProperties.config.levelName));
 
         instanceContainer.setGenerator(unit ->
                 unit.modifier().fillHeight(0, 1, Block.GRASS_BLOCK));
@@ -45,11 +48,13 @@ public class NFServer {
         globalEventHandler.addListener(PlayerLoginEvent.class, event -> {
             final Player player = event.getPlayer();
             event.setSpawningInstance(instanceContainer);
+            player.setGameMode(GameMode.CREATIVE);
             player.setRespawnPoint(new Pos(0, 2, 0));
         });
 
         MinecraftServer.getCommandManager().register(new StopCommand());
         MinecraftServer.getCommandManager().register(new VersionCommand());
+        MinecraftServer.getCommandManager().register(new ExtensionsCommand());
 
         switch (ServerProperties.config.connectionMode.toUpperCase(Locale.ROOT)) {
             case "OFFLINE":
@@ -64,7 +69,7 @@ public class NFServer {
                 VelocityProxy.enable(ServerProperties.config.connectionModeSecret);
                 break;
             default:
-                MinecraftServer.LOGGER.warn("Unknown connection mode " + ServerProperties.config.connectionMode);
+                MinecraftServer.LOGGER.warn("Unknown connection mode: " + ServerProperties.config.connectionMode);
                 break;
         }
 
@@ -74,6 +79,8 @@ public class NFServer {
 
     public static void stop() {
         MinecraftServer.LOGGER.info("Shutting down NFServer " + VERSION);
+        MinecraftServer.LOGGER.info("Saving levels");
+        MinecraftServer.getInstanceManager().getInstances().forEach(Instance::saveChunksToStorage);
         System.exit(0);
     }
 }
