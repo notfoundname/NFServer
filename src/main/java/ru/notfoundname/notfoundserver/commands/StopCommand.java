@@ -1,17 +1,18 @@
 package ru.notfoundname.notfoundserver.commands;
 
+import net.minestom.server.command.ConsoleSender;
 import net.minestom.server.command.builder.Command;
-import net.minestom.server.entity.Player;
 import ru.notfoundname.notfoundserver.NFServer;
 import ru.notfoundname.notfoundserver.ServerProperties;
 
 public class StopCommand extends Command {
+    public static final String PERMISSION = "nfserver.command.stop";
     public StopCommand() {
-        super("stop", "end", "shutdown", "quit", "");
+        super("stop", "end", "shutdown", "quit");
         setCondition(((sender, commandString) -> {
-            if (sender instanceof Player) {
-                return ServerProperties.config.allowAllPlayersToExecuteDefaultCommands;
-            } else return true;
+            if (sender instanceof ConsoleSender)
+                return true;
+            else return sender.hasPermission(ServerProperties.baseSettings.operatorPermission);
         }));
         setDefaultExecutor((sender, context) -> {
             NFServer.stop();

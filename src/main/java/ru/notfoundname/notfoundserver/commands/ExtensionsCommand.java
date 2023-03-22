@@ -1,9 +1,7 @@
 package ru.notfoundname.notfoundserver.commands;
 
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.ComponentBuilder;
 import net.kyori.adventure.text.event.HoverEvent;
-import net.kyori.adventure.text.format.NamedTextColor;
 import net.minestom.server.MinecraftServer;
 import net.minestom.server.command.ConsoleSender;
 import net.minestom.server.command.builder.Command;
@@ -11,17 +9,17 @@ import net.minestom.server.entity.Player;
 import net.minestom.server.extensions.Extension;
 import ru.notfoundname.notfoundserver.ServerProperties;
 
-import java.io.Console;
 import java.util.Arrays;
 
 public class ExtensionsCommand extends Command {
 
+    public static final String PERMISSION = "nfserver.command.extensions";
     public ExtensionsCommand() {
         super("extensions", "exts");
         setCondition(((sender, commandString) -> {
-            if (sender instanceof Player) {
-                return ServerProperties.config.allowAllPlayersToExecuteDefaultCommands;
-            } else return true;
+            if (sender instanceof ConsoleSender)
+                return true;
+            else return sender.hasPermission(ServerProperties.baseSettings.operatorPermission);
         }));
         addSyntax(((sender, context) -> {
             if (MinecraftServer.getExtensionManager().getExtensions().isEmpty()) {

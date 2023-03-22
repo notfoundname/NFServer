@@ -1,7 +1,7 @@
 package ru.notfoundname.notfoundserver;
 
-import org.spongepowered.configurate.BasicConfigurationNode;
-import org.spongepowered.configurate.gson.GsonConfigurationLoader;
+import org.spongepowered.configurate.CommentedConfigurationNode;
+import org.spongepowered.configurate.hocon.HoconConfigurationLoader;
 import org.spongepowered.configurate.objectmapping.ConfigSerializable;
 import org.spongepowered.configurate.objectmapping.meta.Comment;
 
@@ -10,10 +10,13 @@ import java.io.IOException;
 
 public final class ServerProperties {
 
-    public static final File serverFile = new File(".", "server-properties.json");
-    public static GsonConfigurationLoader loader;
-    public static BasicConfigurationNode rootNode;
-    public static Properties config;
+    public static final File serverFile = new File(".", "server-properties.conf");
+    public static HoconConfigurationLoader loader;
+    public static CommentedConfigurationNode rootNode;
+
+    public static BaseSettings baseSettings;
+    public static GameSettings gameSettings;
+    public static Translations translations;
 
     public static void initialize() throws IOException {
 
@@ -25,35 +28,58 @@ public final class ServerProperties {
             }
         }
 
-        loader = GsonConfigurationLoader.builder()
+        loader = HoconConfigurationLoader.builder()
                 .path(serverFile.toPath())
                 .build();
-
         rootNode = loader.load();
-        config = rootNode.get(Properties.class);
-        rootNode.set(Properties.class, config);
+
+        baseSettings = rootNode.node("base-settings").get(BaseSettings.class);
+        gameSettings = rootNode.node("minestom-settings").get(GameSettings.class);
+        translations = rootNode.node("translations").get(Translations.class);
+
+        rootNode.node("base-settings").set(BaseSettings.class, baseSettings);
+        rootNode.node("game-settings").set(GameSettings.class, gameSettings);
+        rootNode.node("translations").set(Translations.class, translations);
+
         loader.save(rootNode);
     }
 
     @ConfigSerializable
-    public static class Properties {
-        @Comment("test")
+    public static class BaseSettings {
         public String serverIp = "0.0.0.0";
         public int serverPort = 25565;
+        @Comment("Minimessage format. To set server logo, put 64x64 icon.png near server core.")
         public String motd = "A Minecraft NFServer";
         public int maxPlayers = 20;
         public String connectionMode = "offline";
-        public String connectionModeSecret = "secret";
+        public String connectionModeSecret = "";
+        @Comment("Don't show nicknames when you hover on player number.")
         public boolean hideOnlinePlayers = false;
         public boolean broadcastToLan = true;
         public boolean whiteList = false;
         public boolean whiteListActsAsBlackList = false;
-        public boolean allowAllPlayersToExecuteDefaultCommands = false;
-        public String levelName = "world";
+        public String operatorPermission = "nfserver.operator";
+        public boolean terminalEnabled = true;
+        public String restartScript = "start.sh";
+    }
 
+    @ConfigSerializable
+    public static class GameSettings {
+        @Comment("Default world (or instance) that will be used for joined players.")
+        public String levelName = "world";
+        @Comment("Possible values: peaceful, easy, normal, hard")
         public String difficulty = "easy";
+        @Comment("Possible values: survival, creative, adventure, spectator")
+        public String gamemode = "survival";
         public int viewDistance = 10;
-        public int simulationDistance = 10;
-        public boolean pvp = true;
+        public int viewSimulationDistance = 10;
+        public boolean pvpExtensionEnabled = true;
+        public boolean pvpExtensionOldSystem = false;
+    }
+
+    @ConfigSerializable
+    public static class Translations {
+        public String unknownCommand = "Unknown command.";
+        public String serverWhitelisted = "Server is whitelisted";
     }
 }
