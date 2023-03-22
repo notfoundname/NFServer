@@ -18,8 +18,7 @@ public final class ServerProperties {
     public static GameSettings gameSettings;
     public static Translations translations;
 
-    public static void initialize() throws IOException {
-
+    public static void reload() throws IOException {
         if (!serverFile.exists()) {
             try {
                 serverFile.createNewFile();
@@ -56,8 +55,9 @@ public final class ServerProperties {
         @Comment("Don't show nicknames when you hover on player number.")
         public boolean hideOnlinePlayers = false;
         public boolean broadcastToLan = true;
+        @Comment("Currently non-functional")
         public boolean whiteList = false;
-        public boolean whiteListActsAsBlackList = false;
+        //public boolean whiteListActsAsBlackList = false;
         public String operatorPermission = "nfserver.operator";
         public boolean terminalEnabled = true;
         public String restartScript = "start.sh";
@@ -74,12 +74,12 @@ public final class ServerProperties {
         public int viewDistance = 10;
         public int viewSimulationDistance = 10;
         public boolean pvpExtensionEnabled = true;
-        public boolean pvpExtensionOldSystem = false;
+        //public boolean pvpExtensionOldSystem = false;
     }
 
     @ConfigSerializable
     public static class Translations {
-        public String unknownCommand = "Unknown command.";
+        public String unknownCommand = "Unknown command! Contact server administrator if this is a problem.";
         public String serverWhitelisted = "Server is whitelisted";
     }
 }

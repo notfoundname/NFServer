@@ -9,13 +9,10 @@ public class StopCommand extends Command {
     public static final String PERMISSION = "nfserver.command.stop";
     public StopCommand() {
         super("stop", "end", "shutdown", "quit");
-        setCondition(((sender, commandString) -> {
-            if (sender instanceof ConsoleSender)
-                return true;
-            else return sender.hasPermission(ServerProperties.baseSettings.operatorPermission);
-        }));
-        setDefaultExecutor((sender, context) -> {
-            NFServer.stop();
-        });
+        setCondition(((sender, commandString) ->
+                sender instanceof ConsoleSender
+                        || sender.hasPermission(PERMISSION)
+                        || sender.hasPermission(ServerProperties.baseSettings.operatorPermission)));
+        setDefaultExecutor((sender, context) -> NFServer.stop());
     }
 }

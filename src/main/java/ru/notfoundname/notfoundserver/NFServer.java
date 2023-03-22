@@ -18,10 +18,7 @@ import net.minestom.server.instance.*;
 import net.minestom.server.instance.block.Block;
 import net.minestom.server.coordinate.Pos;
 import net.minestom.server.world.Difficulty;
-import ru.notfoundname.notfoundserver.commands.ExtensionsCommand;
-import ru.notfoundname.notfoundserver.commands.RestartCommand;
-import ru.notfoundname.notfoundserver.commands.StopCommand;
-import ru.notfoundname.notfoundserver.commands.VersionCommand;
+import ru.notfoundname.notfoundserver.commands.*;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -34,7 +31,7 @@ public class NFServer {
 
     public static void main(String[] args) {
         try {
-            ServerProperties.initialize();
+            ServerProperties.reload();
             System.setProperty("minestom.chunk-view-distance", String.valueOf(ServerProperties.gameSettings.viewDistance));
             System.setProperty("minestom.entity-view-distance", String.valueOf(ServerProperties.gameSettings.viewSimulationDistance));
             if (!ServerProperties.baseSettings.terminalEnabled) {
@@ -91,9 +88,8 @@ public class NFServer {
             }
             player.setRespawnPoint(new Pos(0, 2, 0));
         });
-        globalEventHandler.addListener(PlayerChatEvent.class, event -> {
-            MinecraftServer.LOGGER.info(event.getPlayer().getName() + " - " + event.getMessage());
-        });
+        globalEventHandler.addListener(PlayerChatEvent.class, event ->
+                MinecraftServer.LOGGER.info(event.getPlayer().getName() + " - " + event.getMessage()));
         globalEventHandler.addListener(ServerListPingEvent.class, event -> {
             event.getResponseData().setDescription(
                     MiniMessage.miniMessage().deserialize(ServerProperties.baseSettings.motd));
@@ -105,6 +101,9 @@ public class NFServer {
         MinecraftServer.getCommandManager().register(new VersionCommand());
         MinecraftServer.getCommandManager().register(new ExtensionsCommand());
         MinecraftServer.getCommandManager().register(new RestartCommand());
+        MinecraftServer.getCommandManager().register(new ReloadCommand());
+        MinecraftServer.getCommandManager().register(new InstanceCommand());
+
         MinecraftServer.getCommandManager().setUnknownCommandCallback((sender, command) -> {
             sender.sendMessage(MiniMessage.miniMessage().deserialize(ServerProperties.translations.unknownCommand));
             if (sender instanceof Player) {

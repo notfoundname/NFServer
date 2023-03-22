@@ -5,7 +5,6 @@ import net.kyori.adventure.text.event.HoverEvent;
 import net.minestom.server.MinecraftServer;
 import net.minestom.server.command.ConsoleSender;
 import net.minestom.server.command.builder.Command;
-import net.minestom.server.entity.Player;
 import net.minestom.server.extensions.Extension;
 import ru.notfoundname.notfoundserver.ServerProperties;
 
@@ -16,11 +15,10 @@ public class ExtensionsCommand extends Command {
     public static final String PERMISSION = "nfserver.command.extensions";
     public ExtensionsCommand() {
         super("extensions", "exts");
-        setCondition(((sender, commandString) -> {
-            if (sender instanceof ConsoleSender)
-                return true;
-            else return sender.hasPermission(ServerProperties.baseSettings.operatorPermission);
-        }));
+        setCondition(((sender, commandString) ->
+                sender instanceof ConsoleSender
+                        || sender.hasPermission(PERMISSION)
+                        || sender.hasPermission(ServerProperties.baseSettings.operatorPermission)));
         addSyntax(((sender, context) -> {
             if (MinecraftServer.getExtensionManager().getExtensions().isEmpty()) {
                 sender.sendMessage("There are no enabled extensions.");
