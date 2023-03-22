@@ -1,4 +1,4 @@
-package ru.notfoundname.notfoundserver;
+package ru.notfoundname.nfserver;
 
 import io.github.bloepiloepi.pvp.PvpExtension;
 import net.kyori.adventure.text.minimessage.MiniMessage;
@@ -18,7 +18,7 @@ import net.minestom.server.instance.*;
 import net.minestom.server.instance.block.Block;
 import net.minestom.server.coordinate.Pos;
 import net.minestom.server.world.Difficulty;
-import ru.notfoundname.notfoundserver.commands.*;
+import ru.notfoundname.nfserver.commands.*;
 
 import java.io.IOException;
 import java.nio.file.Files;

@@ -1,9 +1,9 @@
-package ru.notfoundname.notfoundserver.commands;
+package ru.notfoundname.nfserver.commands;
 
 import net.minestom.server.command.ConsoleSender;
 import net.minestom.server.command.builder.Command;
-import ru.notfoundname.notfoundserver.NFServer;
-import ru.notfoundname.notfoundserver.ServerProperties;
+import ru.notfoundname.nfserver.NFServer;
+import ru.notfoundname.nfserver.ServerProperties;
 
 import java.io.IOException;
 

@@ -1,4 +1,4 @@
-package ru.notfoundname.notfoundserver;
+package ru.notfoundname.nfserver;
 
 import org.spongepowered.configurate.CommentedConfigurationNode;
 import org.spongepowered.configurate.hocon.HoconConfigurationLoader;

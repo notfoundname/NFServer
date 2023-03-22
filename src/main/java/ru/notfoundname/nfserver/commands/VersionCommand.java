@@ -1,12 +1,12 @@
-package ru.notfoundname.notfoundserver.commands;
+package ru.notfoundname.nfserver.commands;
 
 import net.kyori.adventure.text.Component;
 import net.minestom.server.Git;
 import net.minestom.server.MinecraftServer;
 import net.minestom.server.command.ConsoleSender;
 import net.minestom.server.command.builder.Command;
-import ru.notfoundname.notfoundserver.NFServer;
-import ru.notfoundname.notfoundserver.ServerProperties;
+import ru.notfoundname.nfserver.NFServer;
+import ru.notfoundname.nfserver.ServerProperties;
 
 public class VersionCommand extends Command {
     public static final String PERMISSION = "nfserver.command.version";

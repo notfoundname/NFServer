@@ -1,4 +1,4 @@
-package ru.notfoundname.notfoundserver.commands;
+package ru.notfoundname.nfserver.commands;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.HoverEvent;
@@ -6,7 +6,7 @@ import net.minestom.server.MinecraftServer;
 import net.minestom.server.command.ConsoleSender;
 import net.minestom.server.command.builder.Command;
 import net.minestom.server.extensions.Extension;
-import ru.notfoundname.notfoundserver.ServerProperties;
+import ru.notfoundname.nfserver.ServerProperties;
 
 import java.util.Arrays;
 

@@ -1,8 +1,8 @@
-package ru.notfoundname.notfoundserver.commands;
+package ru.notfoundname.nfserver.commands;
 
 import net.minestom.server.command.ConsoleSender;
 import net.minestom.server.command.builder.Command;
-import ru.notfoundname.notfoundserver.ServerProperties;
+import ru.notfoundname.nfserver.ServerProperties;
 
 public class InstanceCommand extends Command {
     public static final String PERMISSION = "nfserver.command.instance";
