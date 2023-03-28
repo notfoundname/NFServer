@@ -15,10 +15,11 @@ repositories {
 }
 
 dependencies {
-    implementation "org.spongepowered:configurate-hocon:${CONFIGURATE_VERSION}"
     implementation "com.github.Minestom:Minestom:${MINESTOM_VERSION}"
     implementation "com.github.TogAr2:MinestomPvP:${MINESTOMPVP_VERSION}"
+    implementation "com.github.TogAr2:MinestomFluids:${MINESTOMFLUIDS_VERSION}"
     implementation "net.kyori:adventure-text-minimessage:${MINIMESSAGE_VERSION}"
+    implementation "org.spongepowered:configurate-hocon:${CONFIGURATE_VERSION}"
 }
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(17)
@@ -27,11 +28,11 @@ compileJava.options.encoding = "UTF-8"
 shadowJar {
     jar {
         manifest {
-            attributes "Main-Class": "ru.notfoundname.notfoundserver.NFServer", "Multi-Release": true
+            attributes "Main-Class": "${NFSERVER_GROUP}.${rootProject.name}", "Multi-Release": true
         }
     }
     blossom {
-        var cringe = "src/main/java/ru/notfoundname/notfoundserver/NFServer.java"
+        var cringe = "src/main/java/ru/notfoundname/nfserver/NFServer.java"
         replaceToken("nfsversion", "${NFSERVER_VERSION}", cringe)
     }
 }

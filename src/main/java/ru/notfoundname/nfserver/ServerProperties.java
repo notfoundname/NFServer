@@ -47,17 +47,15 @@ public final class ServerProperties {
     public static class BaseSettings {
         public String serverIp = "0.0.0.0";
         public int serverPort = 25565;
-        @Comment("Minimessage format. To set server logo, put 64x64 icon.png near server core.")
+        @Comment("MiniMessage format. To set server logo, put 64x64 icon.png near server core.")
         public String motd = "A Minecraft NFServer";
         public int maxPlayers = 20;
-        public String connectionMode = "offline";
+        public ConnectionMode connectionMode = ConnectionMode.OFFLINE;
         public String connectionModeSecret = "";
         @Comment("Don't show nicknames when you hover on player number.")
         public boolean hideOnlinePlayers = false;
         public boolean broadcastToLan = true;
-        @Comment("Currently non-functional")
         public boolean whiteList = false;
-        //public boolean whiteListActsAsBlackList = false;
         public String operatorPermission = "nfserver.operator";
         public boolean terminalEnabled = true;
         public String restartScript = "start.sh";
@@ -74,12 +72,17 @@ public final class ServerProperties {
         public int viewDistance = 10;
         public int viewSimulationDistance = 10;
         public boolean pvpExtensionEnabled = true;
-        //public boolean pvpExtensionOldSystem = false;
+        public boolean fluidsExtensionEnabled = true;
+        public boolean setSkinsBasedOnNickname = true;
     }
 
     @ConfigSerializable
     public static class Translations {
         public String unknownCommand = "Unknown command! Contact server administrator if this is a problem.";
         public String serverWhitelisted = "Server is whitelisted";
+    }
+
+    public enum ConnectionMode {
+        OFFLINE, ONLINE, BUNGEECORD, VELOCITY
     }
 }
