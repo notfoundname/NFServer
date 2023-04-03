@@ -52,26 +52,21 @@ public class NFServer {
 
         InstanceManager instanceManager = MinecraftServer.getInstanceManager();
 
-        if (!Files.exists(Path.of(ServerProperties.gameSettings.levelName))) {
+        if (!Files.exists(ServerProperties.gameSettings.levelName)) {
             try {
-                Files.createDirectory(Path.of(ServerProperties.gameSettings.levelName));
+                Files.createDirectory(ServerProperties.gameSettings.levelName);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
         }
 
-        InstanceContainer instanceContainer = instanceManager.createInstanceContainer(
-                new AnvilLoader(ServerProperties.gameSettings.levelName));
-
+        InstanceContainer instanceContainer = instanceManager.createInstanceContainer();
+        AnvilLoader anvilLoader = new AnvilLoader(ServerProperties.gameSettings.levelName);
+        instanceContainer.setChunkLoader(anvilLoader);
         instanceContainer.setGenerator(unit ->
-                unit.modifier().fillHeight(0, 1, Block.GRASS_BLOCK));
+                unit.modifier().fillHeight(0, 0, Block.STONE));
 
-        try {
-            MinecraftServer.setDifficulty(Difficulty.valueOf(ServerProperties.gameSettings.difficulty.toUpperCase()));
-        } catch (Exception e) {
-            MinecraftServer.LOGGER.warn("Unknown difficulty " + ServerProperties.gameSettings.difficulty);
-            MinecraftServer.setDifficulty(Difficulty.PEACEFUL);
-        }
+        MinecraftServer.setDifficulty(Difficulty.valueOf(ServerProperties.gameSettings.difficulty.toUpperCase()));
 
         GlobalEventHandler globalEventHandler = MinecraftServer.getGlobalEventHandler();
         globalEventHandler.addListener(ServerListPingEvent.class, event -> {
@@ -137,22 +132,12 @@ public class NFServer {
         MinecraftServer.setTerminalEnabled(ServerProperties.baseSettings.terminalEnabled);
 
         switch (ServerProperties.baseSettings.connectionMode) {
-            case OFFLINE -> MinecraftServer.LOGGER.info("Using OFFLINE connection mode");
-            case ONLINE -> {
-                MinecraftServer.LOGGER.info("Using ONLINE connection mode");
-                MojangAuth.init();
-            }
-            case BUNGEECORD -> {
-                MinecraftServer.LOGGER.info("Using BUNGEECORD connection mode");
-                BungeeCordProxy.enable();
-            }
-            case VELOCITY -> {
-                MinecraftServer.LOGGER.info("Using VELOCITY connection mode, make sure the secret is changed");
-                VelocityProxy.enable(ServerProperties.baseSettings.connectionModeSecret);
-            }
-            default ->
-                    MinecraftServer.LOGGER.warn("Unknown connection mode: " + ServerProperties.baseSettings.connectionMode);
+            case ONLINE -> MojangAuth.init();
+            case BUNGEECORD -> BungeeCordProxy.enable();
+            case VELOCITY -> VelocityProxy.enable(ServerProperties.baseSettings.connectionModeSecret);
         }
+
+        MinecraftServer.LOGGER.info("Using " + ServerProperties.baseSettings.connectionMode + " connection mode");
 
         minecraftServer.start(ServerProperties.baseSettings.serverIp, ServerProperties.baseSettings.serverPort);
         MinecraftServer.LOGGER.info("Server started at " +

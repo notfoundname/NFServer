@@ -18,6 +18,7 @@ dependencies {
     implementation "com.github.Minestom:Minestom:${MINESTOM_VERSION}"
     implementation "com.github.TogAr2:MinestomPvP:${MINESTOMPVP_VERSION}"
     implementation "com.github.TogAr2:MinestomFluids:${MINESTOMFLUIDS_VERSION}"
+    implementation "com.github.emortalmc:TNT:${TNT_VERSION}"
     implementation "net.kyori:adventure-text-minimessage:${MINIMESSAGE_VERSION}"
     implementation "org.spongepowered:configurate-hocon:${CONFIGURATE_VERSION}"
 }

@@ -7,6 +7,7 @@ import org.spongepowered.configurate.objectmapping.meta.Comment;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 
 public final class ServerProperties {
 
@@ -33,7 +34,7 @@ public final class ServerProperties {
         rootNode = loader.load();
 
         baseSettings = rootNode.node("base-settings").get(BaseSettings.class);
-        gameSettings = rootNode.node("minestom-settings").get(GameSettings.class);
+        gameSettings = rootNode.node("game-settings").get(GameSettings.class);
         translations = rootNode.node("translations").get(Translations.class);
 
         rootNode.node("base-settings").set(BaseSettings.class, baseSettings);
@@ -64,7 +65,7 @@ public final class ServerProperties {
     @ConfigSerializable
     public static class GameSettings {
         @Comment("Default world (or instance) that will be used for joined players.")
-        public String levelName = "world";
+        public Path levelName = Path.of("world");
         @Comment("Possible values: peaceful, easy, normal, hard")
         public String difficulty = "easy";
         @Comment("Possible values: survival, creative, adventure, spectator")
