@@ -13,6 +13,7 @@ import java.util.Arrays;
 public class ExtensionsCommand extends Command {
 
     public static final String PERMISSION = "nfserver.command.extensions";
+
     public ExtensionsCommand() {
         super("extensions", "exts");
         setCondition(((sender, commandString) ->

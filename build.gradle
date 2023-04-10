@@ -16,11 +16,12 @@ repositories {
 
 dependencies {
     implementation "com.github.Minestom:Minestom:${MINESTOM_VERSION}"
-    implementation "com.github.TogAr2:MinestomPvP:${MINESTOMPVP_VERSION}"
+    implementation "com.github.notfoundname:MinestomBasicLight:${MINESTOMBASICLIGHT_VERSION}"
     implementation "com.github.TogAr2:MinestomFluids:${MINESTOMFLUIDS_VERSION}"
-    implementation "com.github.emortalmc:TNT:${TNT_VERSION}"
     implementation "net.kyori:adventure-text-minimessage:${MINIMESSAGE_VERSION}"
     implementation "org.spongepowered:configurate-hocon:${CONFIGURATE_VERSION}"
+    implementation "com.github.cafestube:MineStom-SlimeLoader:dev~1.19-SNAPSHOT"
+    // implementation "com.github.lordtgm:MinestomTPSFix:documentation-SNAPSHOT"
 }
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(17)

@@ -1,9 +1,10 @@
-# NFServer
+# NFServer ![actions](https://github.com/notfoundname/NFServer/actions/workflows/gradle.yml/badge.svg)
 simple minestom based server with some integrated libraries
 ## Used libraries
-- Configurate HOCON
-- MinestomPVP
-- MiniMessage
+- [Configurate HOCON](https://github.com/SpongePowered/Configurate/)
+- [MinestomBasicLight](https://github.com/notfoundname/MinestomBasicLight)
+- [MinestomFluids](https://github.com/TogAr2/MinestomFluids)
+- [MiniMessage](https://github.com/KyoriPowered/adventure)
 ## Building
 `.\gradlew`
 ## Running

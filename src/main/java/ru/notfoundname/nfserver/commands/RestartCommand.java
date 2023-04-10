@@ -8,7 +8,9 @@ import ru.notfoundname.nfserver.ServerProperties;
 import java.io.IOException;
 
 public class RestartCommand extends Command {
+
     public static final String PERMISSION = "nfserver.command.restart";
+
     public RestartCommand() {
         super("restart", "reboot");
         setCondition(((sender, commandString) ->

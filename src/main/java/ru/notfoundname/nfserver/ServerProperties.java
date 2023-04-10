@@ -1,5 +1,8 @@
 package ru.notfoundname.nfserver;
 
+import net.minestom.server.entity.GameMode;
+import net.minestom.server.world.Difficulty;
+import net.minestom.server.world.DimensionType;
 import org.spongepowered.configurate.CommentedConfigurationNode;
 import org.spongepowered.configurate.hocon.HoconConfigurationLoader;
 import org.spongepowered.configurate.objectmapping.ConfigSerializable;
@@ -48,10 +51,11 @@ public final class ServerProperties {
     public static class BaseSettings {
         public String serverIp = "0.0.0.0";
         public int serverPort = 25565;
-        @Comment("MiniMessage format. To set server logo, put 64x64 icon.png near server core.")
+        @Comment("MiniMessage format. To set server logo, put 64x64 server-icon.png near server core.")
         public String motd = "A Minecraft NFServer";
         public int maxPlayers = 20;
-        public ConnectionMode connectionMode = ConnectionMode.OFFLINE;
+        @Comment("OFFLINE, ONLINE, VELOCITY, BUNGEECORD")
+        public ConnectionMode connectionMode = ConnectionMode.ONLINE;
         public String connectionModeSecret = "";
         @Comment("Don't show nicknames when you hover on player number.")
         public boolean hideOnlinePlayers = false;
@@ -59,20 +63,22 @@ public final class ServerProperties {
         public boolean whiteList = false;
         public String operatorPermission = "nfserver.operator";
         public boolean terminalEnabled = true;
-        public String restartScript = "start.sh";
+        public String restartScript = "./start.sh";
+        /* TODO @Comment("Windows only. https://github.com/lordtgm/MinestomTPSFix")
+        public boolean windowsTpsFix = false; */
     }
 
     @ConfigSerializable
     public static class GameSettings {
         @Comment("Default world (or instance) that will be used for joined players.")
-        public Path levelName = Path.of("world");
-        @Comment("Possible values: peaceful, easy, normal, hard")
-        public String difficulty = "easy";
-        @Comment("Possible values: survival, creative, adventure, spectator")
-        public String gamemode = "survival";
+        public Path levelName = Path.of("./world");
+        @Comment("PEACEFUL, EASY, NORMAL, HARD")
+        public Difficulty difficulty = Difficulty.PEACEFUL;
+        public DimensionType dimension = DimensionType.OVERWORLD;
+        @Comment("SURVIVAL, CREATIVE, ADVENTURE, SPECTATOR")
+        public GameMode gamemode = GameMode.CREATIVE;
         public int viewDistance = 10;
         public int viewSimulationDistance = 10;
-        public boolean pvpExtensionEnabled = true;
         public boolean fluidsExtensionEnabled = true;
         public boolean setSkinsBasedOnNickname = true;
     }

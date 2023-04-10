@@ -1,44 +1,35 @@
 package ru.notfoundname.nfserver;
 
-import io.github.bloepiloepi.pvp.PvpExtension;
 import io.github.togar2.fluids.MinestomFluids;
-import net.kyori.adventure.text.minimessage.MiniMessage;
+import me.waterdev.minestombasiclight.LightEngine;
 import net.minestom.server.MinecraftServer;
-import net.minestom.server.entity.GameMode;
-import net.minestom.server.entity.Player;
-import net.minestom.server.entity.PlayerSkin;
-import net.minestom.server.event.GlobalEventHandler;
-import net.minestom.server.event.player.AsyncPlayerPreLoginEvent;
-import net.minestom.server.event.player.PlayerChatEvent;
-import net.minestom.server.event.player.PlayerLoginEvent;
-import net.minestom.server.event.server.ServerListPingEvent;
 import net.minestom.server.extras.MojangAuth;
 import net.minestom.server.extras.bungee.BungeeCordProxy;
 import net.minestom.server.extras.lan.OpenToLAN;
 import net.minestom.server.extras.velocity.VelocityProxy;
-import net.minestom.server.instance.*;
-import net.minestom.server.instance.block.Block;
-import net.minestom.server.coordinate.Pos;
-import net.minestom.server.world.Difficulty;
 import ru.notfoundname.nfserver.commands.*;
+import ru.notfoundname.nfserver.events.EventRegister;
+import ru.notfoundname.nfserver.instances.InstanceRegister;
 
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.LinkOption;
 import java.nio.file.Path;
 
 public class NFServer {
-    // Automatically replaced by gradle
+    /* Automatically replaced by gradle */
     public static String VERSION = "nfsversion";
+
+    public static LightEngine lightEngine;
 
     public static void main(String[] args) {
         try {
             ServerProperties.reload();
-            System.setProperty("minestom.chunk-view-distance", String.valueOf(ServerProperties.gameSettings.viewDistance));
-            System.setProperty("minestom.entity-view-distance", String.valueOf(ServerProperties.gameSettings.viewSimulationDistance));
-            if (!ServerProperties.baseSettings.terminalEnabled) {
-                System.setProperty("minestom.terminal.disabled", "");
-            }
+            System.setProperty("minestom.chunk-view-distance",
+                    String.valueOf(ServerProperties.gameSettings.viewDistance));
+            System.setProperty("minestom.entity-view-distance",
+                    String.valueOf(ServerProperties.gameSettings.viewSimulationDistance));
+            System.setProperty("minestom.terminal.disabled",
+                    String.valueOf(ServerProperties.baseSettings.terminalEnabled));
         } catch (IOException e) {
             System.err.println("Failed to initialize server configuration: " + e.getMessage());
             if (e.getCause() != null) {
@@ -49,87 +40,25 @@ public class NFServer {
 
         MinecraftServer minecraftServer = MinecraftServer.init();
         MinecraftServer.LOGGER.info("Initializing NFServer " + VERSION);
+        MinecraftServer.setTerminalEnabled(ServerProperties.baseSettings.terminalEnabled);
 
-        InstanceManager instanceManager = MinecraftServer.getInstanceManager();
+        lightEngine = new LightEngine();
 
-        if (!Files.exists(ServerProperties.gameSettings.levelName)) {
-            try {
-                Files.createDirectory(ServerProperties.gameSettings.levelName);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        }
+        InstanceRegister.register(MinecraftServer.getInstanceManager());
+        EventRegister.register(MinecraftServer.getGlobalEventHandler());
+        CommandRegister.register(MinecraftServer.getCommandManager());
 
-        InstanceContainer instanceContainer = instanceManager.createInstanceContainer();
-        AnvilLoader anvilLoader = new AnvilLoader(ServerProperties.gameSettings.levelName);
-        instanceContainer.setChunkLoader(anvilLoader);
-        instanceContainer.setGenerator(unit ->
-                unit.modifier().fillHeight(0, 0, Block.STONE));
-
-        MinecraftServer.setDifficulty(Difficulty.valueOf(ServerProperties.gameSettings.difficulty.toUpperCase()));
-
-        GlobalEventHandler globalEventHandler = MinecraftServer.getGlobalEventHandler();
-        globalEventHandler.addListener(ServerListPingEvent.class, event -> {
-            event.getResponseData().setDescription(
-                    MiniMessage.miniMessage().deserialize(ServerProperties.baseSettings.motd));
-            event.getResponseData().setMaxPlayer(ServerProperties.baseSettings.maxPlayers);
-            event.getResponseData().setPlayersHidden(ServerProperties.baseSettings.hideOnlinePlayers);
-            if (Files.exists(Path.of("./icon.png"), LinkOption.NOFOLLOW_LINKS)) {
-                event.getResponseData().setFavicon("data:image/png;base64,icon.png");
-            }
-        });
-        globalEventHandler.addListener(AsyncPlayerPreLoginEvent.class, event -> {
-           if (ServerProperties.baseSettings.whiteList) {
-                event.getPlayer().kick(
-                        MiniMessage.miniMessage().deserialize(ServerProperties.translations.serverWhitelisted));
-           }
-        });
-        globalEventHandler.addListener(PlayerLoginEvent.class, event -> {
-            final Player player = event.getPlayer();
-            event.setSpawningInstance(instanceContainer);
-            try {
-                player.setGameMode(GameMode.valueOf(ServerProperties.gameSettings.gamemode.toUpperCase()));
-            } catch (IllegalArgumentException e) {
-                MinecraftServer.LOGGER.warn("Unknown gamemode " + ServerProperties.gameSettings.gamemode);
-                player.setGameMode(GameMode.ADVENTURE);
-            }
-            if (ServerProperties.gameSettings.setSkinsBasedOnNickname) {
-                player.setSkin(PlayerSkin.fromUsername(player.getUsername()));
-            }
-            player.setRespawnPoint(new Pos(0, 2, 0));
-        });
-        globalEventHandler.addListener(PlayerChatEvent.class, event ->
-                MinecraftServer.LOGGER.info(event.getPlayer().getName() + " - " + event.getMessage()));
-
-        MinecraftServer.getCommandManager().register(new StopCommand());
-        MinecraftServer.getCommandManager().register(new VersionCommand());
-        MinecraftServer.getCommandManager().register(new ExtensionsCommand());
-        MinecraftServer.getCommandManager().register(new RestartCommand());
-        MinecraftServer.getCommandManager().register(new ReloadCommand());
-        MinecraftServer.getCommandManager().register(new InstanceCommand());
-
-        MinecraftServer.getCommandManager().setUnknownCommandCallback((sender, command) -> {
-            sender.sendMessage(MiniMessage.miniMessage().deserialize(ServerProperties.translations.unknownCommand));
-            if (sender instanceof Player) {
-                MinecraftServer.LOGGER.info(((Player) sender).getDisplayName() + " tried to use command " + command);
-            }
-        });
+        /* TODO different difficulty for instances */
+        MinecraftServer.setDifficulty(ServerProperties.gameSettings.difficulty);
 
         if (ServerProperties.baseSettings.broadcastToLan) {
             OpenToLAN.open();
-        }
-
-        if (ServerProperties.gameSettings.pvpExtensionEnabled) {
-            PvpExtension.init();
-            MinecraftServer.getGlobalEventHandler().addChild(PvpExtension.events());
         }
 
         if (ServerProperties.gameSettings.fluidsExtensionEnabled) {
             MinestomFluids.init();
             MinecraftServer.getGlobalEventHandler().addChild(MinestomFluids.events());
         }
-
-        MinecraftServer.setTerminalEnabled(ServerProperties.baseSettings.terminalEnabled);
 
         switch (ServerProperties.baseSettings.connectionMode) {
             case ONLINE -> MojangAuth.init();
@@ -147,13 +76,18 @@ public class NFServer {
 
     public static void stop() {
         MinecraftServer.LOGGER.info("Shutting down NFServer " + VERSION);
-        MinecraftServer.LOGGER.info("Saving instances");
-        MinecraftServer.getInstanceManager().getInstances().forEach(Instance::saveChunksToStorage);
+        InstanceRegister.save();
         System.exit(0);
     }
 
     public static void restart() throws IOException {
-        stop();
-        Runtime.getRuntime().exec(ServerProperties.baseSettings.restartScript);
+        MinecraftServer.LOGGER.info("Restarting NFServer " + VERSION);
+        InstanceRegister.save();
+        if (Files.exists(Path.of(ServerProperties.baseSettings.restartScript))) {
+            Runtime.getRuntime().exec(ServerProperties.baseSettings.restartScript);
+        } else {
+            MinecraftServer.LOGGER.warn("Restart script does not exist, doing nothing then.");
+        }
+        System.exit(0);
     }
 }

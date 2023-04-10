@@ -6,7 +6,9 @@ import ru.notfoundname.nfserver.NFServer;
 import ru.notfoundname.nfserver.ServerProperties;
 
 public class StopCommand extends Command {
+
     public static final String PERMISSION = "nfserver.command.stop";
+
     public StopCommand() {
         super("stop", "end", "shutdown", "quit");
         setCondition(((sender, commandString) ->

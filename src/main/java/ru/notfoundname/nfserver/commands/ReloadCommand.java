@@ -7,7 +7,9 @@ import ru.notfoundname.nfserver.ServerProperties;
 import java.io.IOException;
 
 public class ReloadCommand extends Command {
+
     public static final String PERMISSION = "nfserver.command.reload";
+
     public ReloadCommand() {
         super("reload");
         setCondition(((sender, commandString) ->
